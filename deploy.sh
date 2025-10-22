@@ -352,7 +352,9 @@ prepare_remote_environment() {
     log_info "Installing Docker Compose..."
     $ssh_cmd "
         if ! command -v docker-compose &> /dev/null; then
-            sudo curl -L 'https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-\$(uname -s)-\$(uname -m)' -o /usr/local/bin/docker-compose
+            SYSTEM=\$(uname -s)
+            ARCH=\$(uname -m)
+            sudo curl -L \"https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-\${SYSTEM}-\${ARCH}\" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
         else
             echo 'Docker Compose already installed'
