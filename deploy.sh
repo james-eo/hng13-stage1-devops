@@ -427,10 +427,10 @@ deploy_application() {
     local deploy_dir="$home_dir/app_deployment"
 
     log_info "Creating deployment directory on remote server..."
-    $ssh_cmd "mkdir -p $deploy_dir" 2>&1 | tee -a "$LOG_FILE"
+    $ssh_cmd "mkdir -p $deploy_dir && chmod 755 $deploy_dir" 2>&1 | tee -a "$LOG_FILE"
 
     log_info "Transferring project files to remote server..."
-    $scp_cmd "$LOCAL_REPO_NAME/" "$REMOTE_USER@$REMOTE_IP:$deploy_dir/$LOCAL_REPO_NAME/" 2>&1 | tee -a "$LOG_FILE"
+    $scp_cmd "$LOCAL_REPO_NAME" "$REMOTE_USER@$REMOTE_IP:$deploy_dir/" 2>&1 | tee -a "$LOG_FILE"
     log_success "Files transferred successfully"
 
     log_info "Building and running Docker containers..."
