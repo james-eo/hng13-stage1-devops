@@ -173,13 +173,14 @@ collect_parameters() {
     done
     log_success "Git Repository: $GIT_REPO"
 
-    # Personal Access Token
-    while [[ -z $GIT_PAT ]]; do
-        read -sp "Enter Personal Access Token (PAT): " GIT_PAT
-        echo ""
-        [[ -z $GIT_PAT ]] && echo "PAT cannot be empty"
-    done
-    log_success "Personal Access Token: [HIDDEN]"
+    # Personal Access Token (optional for public repos)
+    read -sp "Enter Personal Access Token (PAT) [leave empty for public repos]: " GIT_PAT
+    echo ""
+    if [[ -z $GIT_PAT ]]; then
+        log_warning "Personal Access Token: [SKIPPED - using public repo mode]"
+    else
+        log_success "Personal Access Token: [HIDDEN]"
+    fi
 
     # Git Branch (optional, defaults to main)
     read -p "Enter Git Branch (default: main): " GIT_BRANCH
@@ -342,7 +343,7 @@ prepare_remote_environment() {
     $ssh_cmd "
         if ! command -v docker &> /dev/null; then
             sudo apt-get install -y docker.io
-            log_success 'Docker installed'
+            echo 'Docker installed successfully'
         else
             echo 'Docker already installed'
         fi
