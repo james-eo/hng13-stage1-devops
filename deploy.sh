@@ -416,7 +416,15 @@ deploy_application() {
     local ssh_options="-o StrictHostKeyChecking=no -i $SSH_KEY"
     local ssh_cmd="ssh $ssh_options $REMOTE_USER@$REMOTE_IP"
     local scp_cmd="scp -r -i $SSH_KEY -o StrictHostKeyChecking=no"
-    local deploy_dir="/home/$REMOTE_USER/app_deployment"
+    
+    # Determine home directory based on user (root uses /root, others use /home/username)
+    local home_dir
+    if [[ "$REMOTE_USER" == "root" ]]; then
+        home_dir="/root"
+    else
+        home_dir="/home/$REMOTE_USER"
+    fi
+    local deploy_dir="$home_dir/app_deployment"
 
     log_info "Creating deployment directory on remote server..."
     $ssh_cmd "mkdir -p $deploy_dir" 2>&1 | tee -a "$LOG_FILE"
